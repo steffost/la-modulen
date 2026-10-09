@@ -1,0 +1,589 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Levitas Aequilibrium</title>
+<meta name="description" content="How a ship of sixteen kilometres learns to float. Oris walks through the Levitas Aequilibrium, the LA module of Ombra Prime, from a living cell to lift.">
+<meta property="og:type" content="video.other">
+<meta property="og:title" content="Levitas Aequilibrium">
+<meta property="og:description" content="How a ship of sixteen kilometres learns to float. Oris walks through the Levitas Aequilibrium, the LA module of Ombra Prime, from a living cell to lift.">
+<meta property="og:image" content="http://ombraprime.com/la-modulen/poster.jpg">
+<meta property="og:url" content="http://ombraprime.com/la-modulen/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Michroma&family=Saira:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.13/dist/hls.min.js"></script>
+<style>
+/* Layout: one dark studio, like the film's set. The film sits on top; below it the chain from the film
+   is rebuilt as a live diagram that lights up in step with Oris, with the coin's story beside it. */
+:root {
+  color-scheme: dark;
+  --void: #060908;          /* studio dark, faint green bias */
+  --panel: #0c1210;
+  --line: #1c2a24;
+  --dim: #6f8a7d;           /* secondary text */
+  --text: #d9e6df;
+  --leviton: #8fd42a;       /* the coins' green (MI_Pulse_Green) */
+  --leviton-hot: #c6ff5c;   /* the same green at full glow */
+  --plasma: #f2a93b;        /* Vitalis Plasma, gold */
+  --gemma: #d8434a;         /* Ignis Gemma, deep red */
+  --display: "Michroma", "Eurostile", "Arial Black", sans-serif;
+  --body: "Saira", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "Consolas", monospace;
+}
+* { box-sizing: border-box; }
+html { background: var(--void); }
+body {
+  background: var(--void);
+  color: var(--text);
+  font: 400 16px/1.6 var(--body);
+  padding-inline: clamp(16px, 4vw, 48px);
+  padding-block: 0 64px;
+  overflow-x: hidden;
+}
+body::before {   /* faint floor glow behind everything */
+  content: ""; position: fixed; inset: 0; pointer-events: none; z-index: -1;
+  background:
+    radial-gradient(70% 45% at 50% 0%, rgba(143, 212, 42, 0.07), transparent 70%),
+    radial-gradient(50% 40% at 50% 100%, rgba(143, 212, 42, 0.04), transparent 70%);
+}
+.wrap { max-width: 1240px; margin-inline: auto; }
+a { color: var(--leviton); }
+:focus-visible { outline: 2px solid var(--leviton-hot); outline-offset: 3px; }
+
+/* ---------- header ---------- */
+.hud {
+  display: flex; flex-wrap: wrap; gap: 6px 24px; justify-content: space-between; align-items: center;
+  padding-block: 18px; border-bottom: 1px solid var(--line);
+  font: 500 11px/1.4 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim);
+}
+.hud b { color: var(--leviton); font-weight: 500; }
+.hud .live::before {
+  content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 8px;
+  background: var(--leviton); box-shadow: 0 0 8px var(--leviton); vertical-align: 1px;
+  animation: blink 2s ease-in-out infinite;
+}
+.intro { display: grid; gap: 10px; padding-block: 44px 28px; }
+.eyebrow { font: 500 12px/1 var(--mono); letter-spacing: 0.22em; text-transform: uppercase; color: var(--leviton); }
+h1 {
+  margin: 0; font: 400 clamp(26px, 5.4vw, 64px)/1.05 var(--display); letter-spacing: 0.02em;
+  text-wrap: balance; color: #f1f7f3;
+  text-shadow: 0 0 28px rgba(143, 212, 42, 0.25);
+}
+.lede { margin: 6px 0 0; max-width: 62ch; color: var(--dim); font-size: clamp(16px, 1.6vw, 19px); font-weight: 300; }
+.lede strong { color: var(--text); font-weight: 500; }
+
+/* ---------- player ---------- */
+.player {
+  position: relative; background: #000; aspect-ratio: 16 / 9; max-width: 100%;
+  border: 1px solid var(--line);
+}
+.player video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #000; }
+.player .corner { position: absolute; width: 22px; height: 22px; border-color: var(--leviton); border-style: solid; opacity: 0.8; pointer-events: none; }
+.corner.tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+.corner.tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
+.corner.bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
+.corner.br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+.bigplay {
+  position: absolute; inset: 0; display: grid; place-items: center; gap: 14px; align-content: center;
+  background: radial-gradient(closest-side, rgba(0,0,0,0.35), rgba(0,0,0,0.6));
+  border: 0; color: var(--text); cursor: pointer; font: 500 12px/1 var(--mono); letter-spacing: 0.24em; text-transform: uppercase;
+}
+.bigplay .ring {
+  width: 84px; height: 84px; border-radius: 50%; display: grid; place-items: center;
+  border: 2px solid var(--leviton); box-shadow: 0 0 30px rgba(143, 212, 42, 0.45), inset 0 0 18px rgba(143, 212, 42, 0.25);
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+.bigplay:hover .ring { transform: scale(1.06); box-shadow: 0 0 46px rgba(143, 212, 42, 0.7), inset 0 0 22px rgba(143, 212, 42, 0.35); }
+.bigplay svg { width: 30px; height: 30px; margin-left: 5px; fill: var(--leviton-hot); }
+.player:fullscreen { border: 0; aspect-ratio: auto; width: 100%; height: 100%; }
+.player:fullscreen .sub { font-size: clamp(18px, 2.2vw, 30px); }
+.sub {   /* Oris' words over the bottom of the film */
+  position: absolute; left: 50%; bottom: 7%; transform: translateX(-50%); width: min(86%, 900px);
+  text-align: center; font: 400 clamp(13px, 1.6vw, 21px)/1.4 var(--body); color: #fff;
+  text-shadow: 0 1px 2px #000, 0 0 12px rgba(0,0,0,0.9); pointer-events: none; transition: opacity 0.3s;
+}
+.sub[data-off="1"] { opacity: 0; }
+
+.controls {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding-block: 12px;
+  font: 500 12px/1 var(--mono); letter-spacing: 0.08em; color: var(--dim);
+}
+.btn {
+  appearance: none; background: var(--panel); color: var(--text); border: 1px solid var(--line);
+  height: 34px; min-width: 34px; padding-inline: 12px; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font: inherit; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer;
+}
+.btn:hover { border-color: var(--leviton); color: #fff; }
+.btn svg { width: 14px; height: 14px; fill: currentColor; }
+.time { font-variant-numeric: tabular-nums; color: var(--text); min-width: 11ch; }
+.seg { display: inline-flex; border: 1px solid var(--line); }
+.seg button { border: 0; background: transparent; color: var(--dim); height: 32px; padding-inline: 12px; font: inherit; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: rgba(143, 212, 42, 0.14); color: var(--leviton-hot); }
+.spacer { flex: 1; }
+
+/* chapter strip = scrubber */
+.chapters { position: relative; display: flex; height: 46px; cursor: pointer; user-select: none; touch-action: none; }
+.chap {
+  position: relative; min-width: 0; border-left: 1px solid var(--void); background: var(--panel);
+  display: flex; align-items: flex-end; padding: 0 0 6px 6px; overflow: hidden;
+  font: 500 10px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim); white-space: nowrap;
+}
+.chap .fill { position: absolute; inset: 0 auto 0 0; width: 0; background: rgba(143, 212, 42, 0.16); pointer-events: none; }
+.chap span { position: relative; overflow: hidden; text-overflow: ellipsis; }
+.chap.on { color: var(--leviton-hot); }
+.chap.on::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 2px; background: var(--leviton); box-shadow: 0 0 10px var(--leviton); }
+.playhead { position: absolute; top: -4px; bottom: -4px; width: 2px; background: var(--leviton-hot); box-shadow: 0 0 10px var(--leviton); left: 0; pointer-events: none; }
+
+/* ---------- the chain ---------- */
+section { padding-block: 64px 0; }
+.sec-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; margin-bottom: 20px; }
+h2 { margin: 0; font: 400 clamp(18px, 2.6vw, 28px)/1.2 var(--display); letter-spacing: 0.03em; text-wrap: balance; }
+.hint { font: 400 12px/1.4 var(--mono); color: var(--dim); letter-spacing: 0.06em; }
+.chain { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+.graph { overflow-x: auto; border: 1px solid var(--line); background: linear-gradient(180deg, rgba(143,212,42,0.03), transparent 60%), var(--panel); }
+.graph svg { display: block; width: 100%; min-width: 660px; height: auto; }
+.coin { cursor: pointer; }
+.coin .body { fill: #0a110d; stroke: var(--leviton); stroke-width: 2; opacity: 0.85; transition: opacity 0.4s; }
+.coin .inner { fill: none; stroke: var(--leviton); stroke-width: 1; opacity: 0.45; }
+.coin .core { fill: var(--leviton); opacity: 0.55; transition: opacity 0.4s; }
+.coin .halo { fill: var(--leviton-hot); opacity: 0; filter: url(#blur); transition: opacity 0.5s; }
+.coin text { fill: var(--text); font: 500 15px var(--body); text-anchor: middle; letter-spacing: 0.02em; }
+.coin .num { fill: var(--dim); font: 500 11px var(--mono); letter-spacing: 0.1em; }
+.coin:hover .body, .coin:focus-visible .body { opacity: 1; stroke: var(--leviton-hot); }
+.coin:focus { outline: none; }
+.coin.on .halo { opacity: 0.55; animation: pulse 1s ease-in-out infinite; }
+.coin.on .core { opacity: 1; fill: var(--leviton-hot); }
+.coin.on .body { stroke: var(--leviton-hot); opacity: 1; }
+.coin.on text:not(.num) { fill: #fff; }
+.coin.all .halo { opacity: 0.3; }
+.arrow path.track { fill: none; stroke: var(--line); stroke-width: 3; }
+.arrow path.flow { fill: none; stroke: var(--leviton); stroke-width: 2; stroke-dasharray: 3 11; opacity: 0.35; animation: flow 1.6s linear infinite; }
+.arrow polygon { fill: var(--leviton); opacity: 0.45; }
+.arrow.on path.flow { stroke: var(--leviton-hot); opacity: 1; stroke-width: 3; animation-duration: 0.7s; filter: url(#soft); }
+.arrow.on polygon { fill: var(--leviton-hot); opacity: 1; }
+.arrow.plasma path.flow { stroke: var(--plasma); }
+.arrow.plasma polygon { fill: var(--plasma); }
+.arrow.gemma path.flow { stroke: var(--gemma); }
+.arrow.gemma polygon { fill: var(--gemma); }
+
+.card { border: 1px solid var(--line); background: var(--panel); padding: 22px 22px 24px; display: grid; gap: 14px; min-width: 0; }
+.card .tag { font: 500 11px/1 var(--mono); letter-spacing: 0.18em; text-transform: uppercase; color: var(--leviton); display: flex; justify-content: space-between; gap: 10px; }
+.card .tag i { font-style: normal; color: var(--dim); }
+.card h3 { margin: 0; font: 400 clamp(18px, 2vw, 24px)/1.2 var(--display); color: #fff; }
+.card p { margin: 0; }
+.card .what { color: var(--dim); }
+.card .role { color: var(--text); }
+.links { display: grid; gap: 10px; padding-top: 4px; border-top: 1px solid var(--line); }
+.link { display: grid; gap: 2px; padding-top: 10px; }
+.link .dir { font: 500 11px/1.3 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--leviton); }
+.link .dir.plasma { color: var(--plasma); }
+.link .dir.gemma { color: var(--gemma); }
+.link p { font-size: 15px; color: var(--dim); }
+.link p b { color: var(--text); font-weight: 500; }
+.card button.seek { justify-self: start; }
+
+/* ---------- reading ---------- */
+.oneline {
+  margin: 0; max-width: 40ch; font: 300 clamp(20px, 2.6vw, 30px)/1.4 var(--body); color: var(--text); text-wrap: balance;
+}
+.oneline em { font-style: normal; color: var(--leviton-hot); }
+.cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; margin-top: 36px; }
+.cols .card { align-content: start; }
+.cols ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 12px; }
+.cols li { padding-left: 16px; position: relative; color: var(--dim); }
+.cols li::before { content: ""; position: absolute; left: 0; top: 0.7em; width: 6px; height: 6px; border: 1px solid var(--leviton); transform: rotate(45deg); }
+.cols li b { color: var(--text); font-weight: 500; }
+.state { display: grid; grid-template-columns: 12px minmax(0, 1fr); gap: 4px 12px; align-items: baseline; }
+.state .dot { width: 10px; height: 10px; border-radius: 50%; }
+.dot.dead { background: #6b4a1e; }
+.dot.alive { background: var(--leviton); box-shadow: 0 0 10px var(--leviton); }
+.dot.crit { background: var(--plasma); animation: blink 0.9s steps(2) infinite; }
+.state p { margin: 0; color: var(--dim); }
+.state b { color: var(--text); font-weight: 500; }
+
+footer {
+  margin-top: 72px; padding-top: 18px; border-top: 1px solid var(--line);
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px;
+  font: 400 11px/1.5 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim);
+}
+
+@keyframes pulse { 0%, 100% { opacity: 0.18; } 50% { opacity: 0.75; } }
+@keyframes flow { to { stroke-dashoffset: -28; } }
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+
+@media (max-width: 900px) {
+  .chain { grid-template-columns: minmax(0, 1fr); }
+  .cols { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 560px) {
+  .chap span { display: none; }
+  .chapters { height: 30px; }
+  .controls .label { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="hud">
+    <span><b>Ombra Prime</b> · Propulsion archive</span>
+    <span class="live">LA module · Levitas Aequilibrium</span>
+  </header>
+
+  <div class="intro">
+    <span class="eyebrow">The Heart of Suspension</span>
+    <h1>Levitas Aequilibrium</h1>
+    <p class="lede">How a ship of <strong>sixteen kilometres</strong> learns to float. Oris, the ship's guide, walks the chain from a living cell to lift, one coin at a time. The diagram below the film lights up as she speaks.</p>
+  </div>
+
+  <div class="player" id="player">
+    <video id="film" playsinline preload="metadata" poster="poster.jpg"></video>
+    <div class="sub" id="sub" data-off="1"></div>
+    <button class="bigplay" id="bigplay" type="button" aria-label="Play the film">
+      <span class="ring"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></svg></span>
+      <span>Play · 3 min 03 s · sound on</span>
+    </button>
+    <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+  </div>
+
+  <div class="controls">
+    <button class="btn" id="play" type="button" aria-label="Play"><svg id="playicon" viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></svg></button>
+    <span class="time" id="time">0:00 / 3:03</span>
+    <span class="spacer"></span>
+    <span class="label">Camera</span>
+    <div class="seg" role="group" aria-label="Camera">
+      <button type="button" id="cam-fly" aria-pressed="true">Flying</button>
+      <button type="button" id="cam-fixed" aria-pressed="false">Fixed</button>
+    </div>
+    <button class="btn" id="subs" type="button" aria-pressed="true">Subtitles</button>
+    <button class="btn" id="mute" type="button" aria-label="Mute"><svg viewBox="0 0 24 24"><path id="muteicon" d="M4 9h4l5-4v14l-5-4H4zM16 8a5 5 0 010 8M18.5 5.5a8.5 8.5 0 010 13" stroke="currentColor" stroke-width="2" fill="currentColor"/></svg></button>
+    <button class="btn" id="fs" type="button" aria-label="Fullscreen"><svg viewBox="0 0 24 24"><path d="M3 9V3h6v2H5v4zm12-6h6v6h-2V5h-4zM3 15h2v4h4v2H3zm16 0h2v6h-6v-2h4z"/></svg></button>
+  </div>
+  <div class="chapters" id="chapters" role="slider" aria-label="Film position" tabindex="0" aria-valuemin="0" aria-valuemax="183" aria-valuenow="0">
+    <div class="playhead" id="playhead"></div>
+  </div>
+
+  <section id="chain">
+    <div class="sec-head">
+      <h2>The chain</h2>
+      <span class="hint">Follows the film · tap a coin to jump there</span>
+    </div>
+    <div class="chain">
+      <div class="graph"><svg id="graph" viewBox="0 0 1040 430" role="img" aria-label="The eight coins of the LA module and the nine arrows between them"></svg></div>
+      <article class="card" id="detail" aria-live="polite"></article>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>The whole flow</h2></div>
+    <p class="oneline">The Sub-Orb gives <em>fuel and spark</em>. The condenser ignites the plasma. The chamber turns it into levitons while the panels make the ship light. The director uses the panels' field as a map and shapes the levitons into <em>lift</em>.</p>
+    <div class="cols">
+      <div class="card">
+        <span class="tag">Where it flies</span>
+        <ul>
+          <li><b>Ombra Prime.</b> The 16 km mothership is carried by many modules.</li>
+          <li><b>Every craft in the hangar</b>, from the smallest shuttle to the heaviest freighter. A shuttle carries one, small enough to sit behind the pilot.</li>
+          <li><b>Inside an atmosphere</b> it is the difference between floating and falling.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="tag">Living states</span>
+        <div class="state"><i class="dot dead"></i><p><b>Dead.</b> The core is dark amber and stiff. No arrow carries anything.</p></div>
+        <div class="state"><i class="dot alive"></i><p><b>Alive.</b> The plasma is liquid fire and the levitons are green. The whole chain glows.</p></div>
+        <div class="state"><i class="dot crit"></i><p><b>Critical.</b> The plasma flickers or cools. The panels stiffen first, and the ship grows heavy.</p></div>
+      </div>
+      <div class="card">
+        <span class="tag">The price</span>
+        <ul>
+          <li>The fuel is <b>milked from living Sub-Orbs</b>.</li>
+          <li>The spark, an Ignis Gemma, can <b>only be taken when a Sub-Orb dies</b>.</li>
+          <li>Every cold start burns one Gemma. Someone harvests another next month.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Rendered in Unreal Engine 5.8 · Voice: Oris Grimace</span>
+    <span>Ombra Prime · LA module, film version</span>
+  </footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var END = 183.4;
+  var FILMS = { fly: "film/kamera/index.txt", fixed: "film/fast/index.txt" };
+  var VOICE0 = 11.5;   // Oris starts 9 s intro + 2.5 s music into the film
+
+  // Oris' manuscript, timed by tider.json (start, length in s from her first word)
+  var SPEECH = [
+    { key: "open", start: 0, len: 51.316, text: "This is the Levitas Aequilibrium. We call it the Heart of Suspension. It is how a ship of sixteen kilometres learns to float. And it is alive. It does not carry Ombra Prime alone. Every craft that leaves our hangar rides on it, from the smallest shuttle to the heaviest freighter. The mothership carries many. A shuttle carries one, small enough to sit behind the pilot. Rockets fight the sky. The Levitas does something quieter. First it makes the ship light. Then it lifts it. Inside an atmosphere, it is the difference between floating and falling. It is part machine, part body. Glass, copper and vacuum. Blood, crystal and pulse. And it runs on what we take from living things. That is the price of every flight. Let me show you how it works." },
+    { key: "suborb", start: 52.316, len: 13.468, text: "Everything begins with the Sub-Orb. A living, bio-engineered cell that draws Vitalis from the Loom and makes it physical. From one Sub-Orb, we take two things. Its fluid. And its fire." },
+    { key: "vitalis", start: 66.784, len: 12.307, text: "The fluid is Vitalis Plasma. The Orb's cytoplasm, milked while it lives. Thick, self-luminous, gold. It is the fuel. But on its own, it is cold, and it sleeps." },
+    { key: "ignis", start: 80.09, len: 13.978, text: "The fire is Ignis Gemma. A crystal of compressed energy, deep red, faintly trembling. It can only be taken when the Orb dies. That is why every one of them is precious. It is the spark." },
+    { key: "cap", start: 95.069, len: 13.56, text: "In the Energy Condenser, the two meet. The plasma fills a quartz core, held in fields of copper. A hammer crushes the Gemma, and the cold fluid becomes living fire. From here, the plasma goes two ways." },
+    { key: "chamber", start: 109.629, len: 13.886, text: "The first way leads to the Quantum Chamber. In its vacuum, the plasma meets the zero-point field and pulls chronons out of the quantum foam. Where they collide, stable green levitons are born. This is the force." },
+    { key: "panel", start: 124.515, len: 15.093, text: "The second way runs beneath the Graviton Panels on the hull. Warmed by the plasma, they thin out spacetime around the ship. A bubble, in which we weigh almost nothing. And they feel the gravity around us, the way skin feels the wind." },
+    { key: "director", start: 140.608, len: 11.564, text: "The Field Director brings both paths together. Thousands of quantum lenses take the raw levitons and shape them, inside the bubble, guided by the panels' map of the field." },
+    { key: "lift", start: 153.171, len: 14.721, text: "The result is lift. No roaring engines. Only balance. If the core goes cold, the panels stiffen, and the ship falls like a stone. But while it burns, we float. That is the Levitas Aequilibrium." }
+  ];
+
+  // the eight coins: position in the diagram, when they glow in the film (s), and what they are
+  var COINS = [
+    { key: "suborb", n: 1, name: "Sub-Orb", x: 75, y: 215, t0: 63.82, t1: 78.03,
+      what: "A living, bio-engineered cell that draws Vitalis from the Loom and makes it physical.",
+      role: "The source of everything. It gives two things: its fluid, the plasma, and its crystal, the spark." },
+    { key: "vitalis", n: 2, name: "Vitalis Plasma", x: 260, y: 90, t0: 78.28, t1: 91.34,
+      what: "The Sub-Orb's cytoplasm. A thick, self-luminous, orange-gold fluid, called Nectar or The Blood.",
+      role: "The volume of the fuel. Cold and sluggish until it is ignited." },
+    { key: "ignis", n: 3, name: "Ignis Gemma", x: 260, y: 340, t0: 91.59, t1: 106.32,
+      what: "The Sub-Orb's mitochondrion. A deep red crystal that trembles faintly, the Fire Diamond.",
+      role: "The spark. Crushed, it gives the violent energy spike a cold engine needs." },
+    { key: "cap", n: 4, name: "Energy Condenser", x: 450, y: 215, t0: 106.57, t1: 120.88,
+      what: "A quartz-glass cylinder with magnetic copper coils and a crushing mechanism, the phase converter.",
+      role: "Charged with plasma, it crushes the crystal and the plasma becomes glowing lava. It pumps it on in two directions." },
+    { key: "chamber", n: 5, name: "Quantum Chamber", x: 640, y: 90, t0: 121.13, t1: 135.77,
+      what: "A quantum resonance chamber: a vacuum where the plasma meets the zero-point field.",
+      role: "The plasma pulls chronons out of the quantum foam. Their collisions give stable, green levitons." },
+    { key: "panel", n: 6, name: "Graviton Panel", x: 640, y: 340, t0: 136.02, t1: 151.86,
+      what: "Hull panels of transparent zirconium with a gold-iridium mesh.",
+      role: "They make spacetime around the ship thinner, a bubble where the ship weighs less. They need warm plasma flowing beneath them." },
+    { key: "director", n: 7, name: "Field Director", x: 825, y: 215, t0: 152.11, t1: 164.42,
+      what: "Thousands of synchronised quantum lenses, using Vectorial Field Mapping.",
+      role: "Shapes the leviton stream inside the panels' bubble and points it." },
+    { key: "lift", n: 8, name: "Lift", x: 975, y: 215, t0: 164.67, t1: 179.89,
+      what: "The result, not a machine.",
+      role: "Hover and drive. The ship carries heavy loads without great rocket engines." }
+  ];
+
+  var ARROWS = [
+    { a: "suborb", b: "vitalis", tone: "plasma", name: "Milking", text: "The cytoplasm is drawn from a living, gene-edited Sub-Orb." },
+    { a: "suborb", b: "ignis", tone: "gemma", name: "Harvest", text: "The crystal is taken when the Sub-Orb dies. That is why it is rare and costly." },
+    { a: "vitalis", b: "cap", tone: "plasma", name: "Charging", text: "Clear hoses, the arteries, fill the core. It is dark and cold." },
+    { a: "ignis", b: "cap", tone: "gemma", name: "Ignition", text: "The crystal goes into the ignition chamber and a mechanical hammer crushes it. K-RACK, WOOOM." },
+    { a: "cap", b: "chamber", tone: "plasma", name: "Activated plasma", text: "Sprayed into the vacuum, where it acts as a hyper-attractor." },
+    { a: "cap", b: "panel", tone: "plasma", name: "Warm plasma", text: "Circulates beneath the panels and keeps them superconducting. Without the flow they stiffen." },
+    { a: "chamber", b: "director", tone: "", name: "Green levitons", text: "Raw and unfocused." },
+    { a: "panel", b: "director", tone: "", name: "Bubble and field map", text: "The panels make the ship light and read the gravity field around the hull. The director needs that map to know where and how to push. Without the bubble, the levitons cannot lift the ship's mass." },
+    { a: "director", b: "lift", tone: "", name: "Shaped leviton stream", text: "Out of the ship: lift or thrust in the chosen direction." }
+  ];
+  var BY = {};
+  COINS.forEach(function (c) { BY[c.key] = c; });
+
+  // chapters for the scrubber
+  var CHAPS = [{ key: "intro", label: "Intro", t0: 0, t1: 9 }, { key: "open", label: "Opening", t0: 9, t1: COINS[0].t0 }];
+  COINS.forEach(function (c, i) {
+    CHAPS.push({ key: c.key, label: c.name, t0: c.t0, t1: i + 1 < COINS.length ? COINS[i + 1].t0 : END });
+  });
+
+  // sentences with estimated times (by length within each spoken section)
+  var LINES = [];
+  SPEECH.forEach(function (s) {
+    var parts = s.text.match(/[^.!?]+[.!?]+/g) || [s.text];
+    var total = parts.reduce(function (n, p) { return n + p.trim().length + 8; }, 0);
+    var acc = 0;
+    parts.forEach(function (p) {
+      var w = p.trim().length + 8;
+      LINES.push({ t0: VOICE0 + s.start + s.len * acc / total, t1: VOICE0 + s.start + s.len * (acc + w) / total, text: p.trim() });
+      acc += w;
+    });
+  });
+
+  var $ = function (id) { return document.getElementById(id); };
+  var video = $("film"), hls = null, cam = "fly", subsOn = true;
+
+  // ---------- video ----------
+  function load(cameraKey) {
+    var t = video.currentTime || 0, wasPlaying = !video.paused && !video.ended;
+    cam = cameraKey;
+    $("cam-fly").setAttribute("aria-pressed", String(cam === "fly"));
+    $("cam-fixed").setAttribute("aria-pressed", String(cam === "fixed"));
+    if (hls) { hls.destroy(); hls = null; }
+    var src = FILMS[cam];
+    if (window.Hls && window.Hls.isSupported()) {
+      hls = new window.Hls({ maxBufferLength: 40, startPosition: t });
+      hls.loadSource(src);
+      hls.attachMedia(video);
+    } else {
+      video.src = src;   // Safari plays HLS natively
+      if (t) video.addEventListener("loadedmetadata", function () { video.currentTime = t; }, { once: true });
+    }
+    if (wasPlaying) video.addEventListener("canplay", function () { video.play().catch(function () {}); }, { once: true });
+  }
+  function play() { $("bigplay").hidden = true; var p = video.play(); if (p) p.catch(function () {}); }
+  function toggle() { if (video.paused || video.ended) play(); else video.pause(); }
+  function seek(t) { video.currentTime = Math.max(0, Math.min(END - 0.05, t)); render(); }
+  function fmt(s) { s = Math.max(0, Math.floor(s)); return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); }
+
+  $("bigplay").addEventListener("click", play);
+  $("play").addEventListener("click", toggle);
+  video.addEventListener("click", toggle);
+  video.addEventListener("play", function () { $("bigplay").hidden = true; $("playicon").innerHTML = '<path d="M6 4h4v16H6zm8 0h4v16h-4z"/>'; $("play").setAttribute("aria-label", "Pause"); });
+  video.addEventListener("pause", function () { $("playicon").innerHTML = '<path d="M6 4l14 8-14 8z"/>'; $("play").setAttribute("aria-label", "Play"); });
+  ["timeupdate", "seeked", "loadedmetadata"].forEach(function (e) { video.addEventListener(e, render); });
+  $("cam-fly").addEventListener("click", function () { if (cam !== "fly") load("fly"); });
+  $("cam-fixed").addEventListener("click", function () { if (cam !== "fixed") load("fixed"); });
+  $("subs").addEventListener("click", function () { subsOn = !subsOn; this.setAttribute("aria-pressed", String(subsOn)); render(); });
+  $("mute").addEventListener("click", function () {
+    video.muted = !video.muted;
+    $("muteicon").setAttribute("d", video.muted ? "M4 9h4l5-4v14l-5-4H4zM16 9l5 6M21 9l-5 6" : "M4 9h4l5-4v14l-5-4H4zM16 8a5 5 0 010 8M18.5 5.5a8.5 8.5 0 010 13");
+  });
+  $("fs").addEventListener("click", function () {
+    var p = $("player");
+    if (document.fullscreenElement) { document.exitFullscreen().catch(function () {}); return; }
+    if (p.requestFullscreen) p.requestFullscreen().catch(function () { if (video.webkitEnterFullscreen) video.webkitEnterFullscreen(); });
+    else if (video.webkitEnterFullscreen) video.webkitEnterFullscreen();
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.target.closest && e.target.closest("button, input")) return;
+    if (e.code === "Space" || e.key === "k") { e.preventDefault(); toggle(); }
+    else if (e.key === "ArrowRight") seek(video.currentTime + 5);
+    else if (e.key === "ArrowLeft") seek(video.currentTime - 5);
+    else if (e.key === "f") $("fs").click();
+  });
+
+  // ---------- chapter strip ----------
+  var strip = $("chapters"), chapEls = [];
+  CHAPS.forEach(function (c) {
+    var d = document.createElement("div");
+    d.className = "chap";
+    d.style.flex = String(c.t1 - c.t0);
+    d.innerHTML = '<i class="fill"></i><span></span>';
+    d.lastChild.textContent = c.label;
+    d.title = c.label + " · " + fmt(c.t0);
+    strip.insertBefore(d, $("playhead"));
+    chapEls.push(d);
+  });
+  function stripSeek(e) {
+    var r = strip.getBoundingClientRect();
+    seek(END * Math.min(1, Math.max(0, (e.clientX - r.left) / r.width)));
+  }
+  var dragging = false;
+  strip.addEventListener("pointerdown", function (e) { dragging = true; strip.setPointerCapture(e.pointerId); stripSeek(e); });
+  strip.addEventListener("pointermove", function (e) { if (dragging) stripSeek(e); });
+  strip.addEventListener("pointerup", function () { dragging = false; });
+  strip.addEventListener("keydown", function (e) {
+    if (e.key === "ArrowRight") { e.preventDefault(); e.stopPropagation(); seek(video.currentTime + 5); }
+    if (e.key === "ArrowLeft") { e.preventDefault(); e.stopPropagation(); seek(video.currentTime - 5); }
+  });
+
+  // ---------- diagram ----------
+  var NS = "http://www.w3.org/2000/svg", svg = $("graph"), R = 40;
+  function el(tag, attrs, parent) {
+    var e = document.createElementNS(NS, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  var defs = el("defs", {}, svg);
+  var f1 = el("filter", { id: "blur", x: "-1", y: "-1", width: "3", height: "3" }, defs);
+  el("feGaussianBlur", { stdDeviation: "14" }, f1);
+  var f2 = el("filter", { id: "soft", x: "-0.5", y: "-0.5", width: "2", height: "2" }, defs);
+  el("feGaussianBlur", { stdDeviation: "2.5", result: "b" }, f2);
+  var m = el("feMerge", {}, f2); el("feMergeNode", { in: "b" }, m); el("feMergeNode", { in: "SourceGraphic" }, m);
+
+  var arrowEls = ARROWS.map(function (a) {
+    var A = BY[a.a], B = BY[a.b];
+    var dx = B.x - A.x, dy = B.y - A.y, L = Math.hypot(dx, dy), ux = dx / L, uy = dy / L;
+    var x1 = A.x + ux * (R + 8), y1 = A.y + uy * (R + 8), x2 = B.x - ux * (R + 14), y2 = B.y - uy * (R + 14);
+    var g = el("g", { class: "arrow " + a.tone }, svg);
+    var d = "M" + x1.toFixed(1) + " " + y1.toFixed(1) + " L" + x2.toFixed(1) + " " + y2.toFixed(1);
+    el("path", { class: "track", d: d }, g);
+    el("path", { class: "flow", d: d }, g);
+    var px = -uy, py = ux, hx = x2 + ux * 8, hy = y2 + uy * 8;
+    el("polygon", { points: [hx, hy, x2 - ux * 4 + px * 7, y2 - uy * 4 + py * 7, x2 - ux * 4 - px * 7, y2 - uy * 4 - py * 7].map(function (v) { return v.toFixed(1); }).join(" ") }, g);
+    return g;
+  });
+  var coinEls = COINS.map(function (c) {
+    var g = el("g", { class: "coin", tabindex: "0", role: "button", "aria-label": c.name + ", jump to " + fmt(c.t0) }, svg);
+    el("circle", { class: "halo", cx: c.x, cy: c.y, r: R + 6 }, g);
+    el("circle", { class: "body", cx: c.x, cy: c.y, r: R }, g);
+    el("circle", { class: "inner", cx: c.x, cy: c.y, r: R - 10 }, g);
+    el("circle", { class: "core", cx: c.x, cy: c.y, r: 9 }, g);
+    var below = c.y > 300 ? 1 : (c.y < 120 ? -1 : 1);
+    var ty = below > 0 ? c.y + R + 26 : c.y - R - 30;
+    var num = el("text", { class: "num", x: c.x, y: ty }, g); num.textContent = "0" + c.n;
+    var name = el("text", { x: c.x, y: ty + 18 }, g); name.textContent = c.name;
+    function go() { seek(c.t0 + 0.05); show(c.key); }
+    g.addEventListener("click", go);
+    g.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
+    return g;
+  });
+
+  // ---------- detail card ----------
+  var shown = null;
+  function show(key) {
+    if (key === shown) return;
+    shown = key;
+    var d = $("detail");
+    if (!BY[key]) {
+      d.innerHTML = '<span class="tag">Overview <i>8 coins · 9 arrows</i></span>' +
+        '<h3>' + (key === "intro" ? "The chain assembles" : "From a living cell to lift") + '</h3>' +
+        '<p class="role">Two branches leave the Sub-Orb and meet in the condenser. From there the plasma splits again: one way makes the force, the other makes the ship light. They meet in the Field Director, and the result is lift.</p>' +
+        '<p class="what">Oris takes the coins in order. Each one glows while she speaks about it. Tap any coin to jump to its part of the film.</p>' +
+        '<button class="btn seek" type="button" data-t="' + COINS[0].t0 + '">Start at the Sub-Orb</button>';
+    } else {
+      var c = BY[key];
+      var ins = ARROWS.filter(function (a) { return a.b === key; }), outs = ARROWS.filter(function (a) { return a.a === key; });
+      var html = '<span class="tag">Coin 0' + c.n + ' <i>' + fmt(c.t0) + '</i></span><h3></h3><p class="what"></p><p class="role"></p><div class="links"></div>';
+      d.innerHTML = html;
+      d.querySelector("h3").textContent = c.name;
+      d.querySelector(".what").textContent = c.what;
+      d.querySelector(".role").textContent = c.role;
+      var links = d.querySelector(".links");
+      ins.concat(outs).forEach(function (a) {
+        var box = document.createElement("div"); box.className = "link";
+        var dir = document.createElement("span"); dir.className = "dir " + a.tone;
+        dir.textContent = BY[a.a].name + " → " + BY[a.b].name;
+        var p = document.createElement("p"); var b = document.createElement("b"); b.textContent = a.name + ". ";
+        p.appendChild(b); p.appendChild(document.createTextNode(a.text));
+        box.appendChild(dir); box.appendChild(p); links.appendChild(box);
+      });
+      if (!ins.length && !outs.length) links.remove();
+    }
+    var btn = d.querySelector("button.seek");
+    if (btn) btn.addEventListener("click", function () { seek(+btn.dataset.t + 0.05); play(); });
+  }
+
+  // ---------- sync ----------
+  function render() {
+    var t = video.currentTime || 0;
+    $("time").textContent = fmt(t) + " / " + fmt(END);
+    $("playhead").style.left = (100 * t / END) + "%";
+    strip.setAttribute("aria-valuenow", String(Math.round(t)));
+    CHAPS.forEach(function (c, i) {
+      var on = t >= c.t0 && t < c.t1;
+      chapEls[i].classList.toggle("on", on);
+      chapEls[i].firstChild.style.width = (100 * Math.min(1, Math.max(0, (t - c.t0) / (c.t1 - c.t0)))) + "%";
+    });
+    var active = null;
+    COINS.forEach(function (c) { if (t >= c.t0 && t < c.t1) active = c.key; });
+    var finale = t >= COINS[COINS.length - 1].t1 - 4;
+    coinEls.forEach(function (g, i) {
+      g.classList.toggle("on", COINS[i].key === active);
+      g.classList.toggle("all", finale);
+    });
+    arrowEls.forEach(function (g, i) { g.classList.toggle("on", ARROWS[i].b === active || finale); });
+    show(active || (t < 9 ? "intro" : "open"));
+    var line = null;
+    for (var i = 0; i < LINES.length; i++) if (t >= LINES[i].t0 && t < LINES[i].t1 + 0.6) { line = LINES[i]; if (t < LINES[i].t1) break; }
+    var sub = $("sub");
+    if (subsOn && line) { if (sub.textContent !== line.text) sub.textContent = line.text; sub.dataset.off = "0"; }
+    else sub.dataset.off = "1";
+  }
+  (function loop() { if (!video.paused) render(); requestAnimationFrame(loop); })();
+
+  load("fly");
+  show("intro");
+  render();
+})();
+</script>
+</body>
+</html>
