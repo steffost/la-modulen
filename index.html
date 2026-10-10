@@ -248,25 +248,25 @@ footer {
     <div class="sub" id="sub" data-off="1"></div>
     <button class="bigplay" id="bigplay" type="button" aria-label="Play the film">
       <span class="ring"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></svg></span>
-      <span>Play · 3 min 03 s · sound on</span>
+      <span>Play · 2 min 56 s · sound on</span>
     </button>
     <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
   </div>
 
   <div class="controls">
     <button class="btn" id="play" type="button" aria-label="Play"><svg id="playicon" viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></svg></button>
-    <span class="time" id="time">0:00 / 3:03</span>
+    <span class="time" id="time">0:00 / 2:56</span>
     <span class="spacer"></span>
     <span class="label">Camera</span>
     <div class="seg" role="group" aria-label="Camera">
       <button type="button" id="cam-fly" aria-pressed="true">Flying</button>
       <button type="button" id="cam-fixed" aria-pressed="false">Fixed</button>
     </div>
-    <button class="btn" id="subs" type="button" aria-pressed="true">Subtitles</button>
+    <button class="btn" id="subs" type="button" aria-pressed="false">Subtitles</button>
     <button class="btn" id="mute" type="button" aria-label="Mute"><svg viewBox="0 0 24 24"><path id="muteicon" d="M4 9h4l5-4v14l-5-4H4zM16 8a5 5 0 010 8M18.5 5.5a8.5 8.5 0 010 13" stroke="currentColor" stroke-width="2" fill="currentColor"/></svg></button>
     <button class="btn" id="fs" type="button" aria-label="Fullscreen"><svg viewBox="0 0 24 24"><path d="M3 9V3h6v2H5v4zm12-6h6v6h-2V5h-4zM3 15h2v4h4v2H3zm16 0h2v6h-6v-2h4z"/></svg></button>
   </div>
-  <div class="chapters" id="chapters" role="slider" aria-label="Film position" tabindex="0" aria-valuemin="0" aria-valuemax="183" aria-valuenow="0">
+  <div class="chapters" id="chapters" role="slider" aria-label="Film position" tabindex="0" aria-valuemin="0" aria-valuemax="176" aria-valuenow="0">
     <div class="playhead" id="playhead"></div>
   </div>
 
@@ -283,7 +283,7 @@ footer {
 
   <section>
     <div class="sec-head"><h2>The whole flow</h2></div>
-    <p class="oneline">The Sub-Orb gives <em>fuel and spark</em>. The condenser ignites the plasma. The chamber turns it into levitons while the panels make the ship light. The director uses the panels' field as a map and shapes the levitons into <em>lift</em>.</p>
+    <p class="oneline">The Sub-Orb gives <em>fuel and spark</em>. The Capacitor ignites the plasma. The Quantum Chamber turns it into levitons while the Graviton Panels make the ship light. The Vector Controller uses the panels' field as a map and shapes the levitons into <em>lift</em>.</p>
     <div class="cols">
       <div class="card">
         <span class="tag">Where it flies</span>
@@ -319,47 +319,47 @@ footer {
 <script>
 (function () {
   "use strict";
-  var END = 183.4;
+  var END = 175.5;
   var FILMS = { fly: "film/kamera/index.txt", fixed: "film/fast/index.txt" };
   var VOICE0 = 11.5;   // Oris starts 9 s intro + 2.5 s music into the film
 
   // Oris' manuscript, timed by tider.json (start, length in s from her first word)
   var SPEECH = [
-    { key: "open", start: 0, len: 51.316, text: "This is the Levitas Aequilibrium. We call it the Heart of Suspension. It is how a ship of sixteen kilometres learns to float. And it is alive. It does not carry Ombra Prime alone. Every craft that leaves our hangar rides on it, from the smallest shuttle to the heaviest freighter. The mothership carries many. A shuttle carries one, small enough to sit behind the pilot. Rockets fight the sky. The Levitas does something quieter. First it makes the ship light. Then it lifts it. Inside an atmosphere, it is the difference between floating and falling. It is part machine, part body. Glass, copper and vacuum. Blood, crystal and pulse. And it runs on what we take from living things. That is the price of every flight. Let me show you how it works." },
-    { key: "suborb", start: 52.316, len: 13.468, text: "Everything begins with the Sub-Orb. A living, bio-engineered cell that draws Vitalis from the Loom and makes it physical. From one Sub-Orb, we take two things. Its fluid. And its fire." },
-    { key: "vitalis", start: 66.784, len: 12.307, text: "The fluid is Vitalis Plasma. The Orb's cytoplasm, milked while it lives. Thick, self-luminous, gold. It is the fuel. But on its own, it is cold, and it sleeps." },
-    { key: "ignis", start: 80.09, len: 13.978, text: "The fire is Ignis Gemma. A crystal of compressed energy, deep red, faintly trembling. It can only be taken when the Orb dies. That is why every one of them is precious. It is the spark." },
-    { key: "cap", start: 95.069, len: 13.56, text: "In the Energy Condenser, the two meet. The plasma fills a quartz core, held in fields of copper. A hammer crushes the Gemma, and the cold fluid becomes living fire. From here, the plasma goes two ways." },
-    { key: "chamber", start: 109.629, len: 13.886, text: "The first way leads to the Quantum Chamber. In its vacuum, the plasma meets the zero-point field and pulls chronons out of the quantum foam. Where they collide, stable green levitons are born. This is the force." },
-    { key: "panel", start: 124.515, len: 15.093, text: "The second way runs beneath the Graviton Panels on the hull. Warmed by the plasma, they thin out spacetime around the ship. A bubble, in which we weigh almost nothing. And they feel the gravity around us, the way skin feels the wind." },
-    { key: "director", start: 140.608, len: 11.564, text: "The Field Director brings both paths together. Thousands of quantum lenses take the raw levitons and shape them, inside the bubble, guided by the panels' map of the field." },
-    { key: "lift", start: 153.171, len: 14.721, text: "The result is lift. No roaring engines. Only balance. If the core goes cold, the panels stiffen, and the ship falls like a stone. But while it burns, we float. That is the Levitas Aequilibrium." }
+    { key: "open", start: 0.0, len: 28.143, text: "This is the Levitas Aequilibrium, the LA module. It produces lift without rocket engines. Every craft aboard Ombra Prime uses it. The mothership carries many modules. A shuttle carries one. The module does two things at the same time. It makes the craft lighter, and it pushes the lighter craft. Both need one fuel and one spark, and both come from the Sub-Orb. The chain has eight steps. Follow the light." },
+    { key: "suborb", start: 29.143, len: 13.839, text: "Step one: the Sub-Orb. A bio-engineered cell that draws Vitalis from the Loom. It supplies the module's two inputs. Vitalis Plasma, the fuel. And Ignis Gemma, the spark." },
+    { key: "vitalis", start: 43.982, len: 13.56, text: "Step two: Vitalis Plasma. The Sub-Orb's cytoplasm, drawn while the Orb is alive. It is the fuel and the reaction medium. Until it is ignited, it is cold and inactive." },
+    { key: "ignis", start: 58.542, len: 13.653, text: "Step three: Ignis Gemma. A red crystal of compressed energy, taken only when a Sub-Orb dies. It is the spark. Every cold start uses one Gemma." },
+    { key: "cap", start: 73.195, len: 16.951, text: "Step four: the Capacitor. A quartz core inside magnetic copper coils. First it is charged with plasma. Then the Gemma is crushed in the ignition chamber, and the plasma becomes active. The Capacitor pumps the active plasma in two directions." },
+    { key: "chamber", start: 91.146, len: 17.601, text: "Step five: the Quantum Resonance Chamber. A vacuum where the active plasma meets the zero-point field. The plasma draws in chronons, and the collisions produce stable green levitons. Levitons are the force that moves the craft." },
+    { key: "panel", start: 109.747, len: 14.35, text: "Step six: the Graviton Panels. They cover the hull, and warm plasma flows beneath them. They reduce the craft's effective mass inside a field bubble. They also read the gravity around the hull, and send that map to the Vector Controller." },
+    { key: "director", start: 125.097, len: 13.653, text: "Step seven: the Vector Controller. It receives the levitons from the chamber and the field map from the panels. Thousands of quantum lenses shape the leviton stream and aim it, inside the bubble." },
+    { key: "lift", start: 139.75, len: 20.294, text: "Step eight: lift. The shaped leviton stream leaves the craft as lift or thrust. If the plasma cools, the panels stop working first, and the craft loses lift. As long as the core is active, the craft stays in the air. That is the Levitas Aequilibrium." }
   ];
 
   // the eight coins: position in the diagram, when they glow in the film (s), and what they are
   var COINS = [
-    { key: "suborb", n: 1, name: "Sub-Orb", x: 75, y: 215, t0: 63.82, t1: 78.03,
+    { key: "suborb", n: 1, name: "Sub-Orb", x: 75, y: 215, t0: 40.64, t1: 55.23,
       what: "A living, bio-engineered cell that draws Vitalis from the Loom and makes it physical.",
       role: "The source of everything. It gives two things: its fluid, the plasma, and its crystal, the spark." },
-    { key: "vitalis", n: 2, name: "Vitalis Plasma", x: 260, y: 90, t0: 78.28, t1: 91.34,
+    { key: "vitalis", n: 2, name: "Vitalis Plasma", x: 260, y: 90, t0: 55.48, t1: 69.79,
       what: "The Sub-Orb's cytoplasm. A thick, self-luminous, orange-gold fluid, called Nectar or The Blood.",
       role: "The volume of the fuel. Cold and sluggish until it is ignited." },
-    { key: "ignis", n: 3, name: "Ignis Gemma", x: 260, y: 340, t0: 91.59, t1: 106.32,
+    { key: "ignis", n: 3, name: "Ignis Gemma", x: 260, y: 340, t0: 70.04, t1: 84.44,
       what: "The Sub-Orb's mitochondrion. A deep red crystal that trembles faintly, the Fire Diamond.",
       role: "The spark. Crushed, it gives the violent energy spike a cold engine needs." },
-    { key: "cap", n: 4, name: "Energy Condenser", x: 450, y: 215, t0: 106.57, t1: 120.88,
+    { key: "cap", n: 4, name: "Capacitor", x: 450, y: 215, t0: 84.69, t1: 102.40,
       what: "A quartz-glass cylinder with magnetic copper coils and a crushing mechanism, the phase converter.",
       role: "Charged with plasma, it crushes the crystal and the plasma becomes glowing lava. It pumps it on in two directions." },
-    { key: "chamber", n: 5, name: "Quantum Chamber", x: 640, y: 90, t0: 121.13, t1: 135.77,
+    { key: "chamber", n: 5, name: "Quantum Chamber", full: "Quantum Resonance Chamber", x: 640, y: 90, t0: 102.65, t1: 121.00,
       what: "A quantum resonance chamber: a vacuum where the plasma meets the zero-point field.",
       role: "The plasma pulls chronons out of the quantum foam. Their collisions give stable, green levitons." },
-    { key: "panel", n: 6, name: "Graviton Panel", x: 640, y: 340, t0: 136.02, t1: 151.86,
+    { key: "panel", n: 6, name: "Graviton Panel", x: 640, y: 340, t0: 121.25, t1: 136.35,
       what: "Hull panels of transparent zirconium with a gold-iridium mesh.",
       role: "They make spacetime around the ship thinner, a bubble where the ship weighs less. They need warm plasma flowing beneath them." },
-    { key: "director", n: 7, name: "Field Director", x: 825, y: 215, t0: 152.11, t1: 164.42,
+    { key: "director", n: 7, name: "Vector Controller", x: 825, y: 215, t0: 136.60, t1: 151.00,
       what: "Thousands of synchronised quantum lenses, using Vectorial Field Mapping.",
       role: "Shapes the leviton stream inside the panels' bubble and points it." },
-    { key: "lift", n: 8, name: "Lift", x: 975, y: 215, t0: 164.67, t1: 179.89,
+    { key: "lift", n: 8, name: "Lift", x: 975, y: 215, t0: 151.25, t1: 172.04,
       what: "The result, not a machine.",
       role: "Hover and drive. The ship carries heavy loads without great rocket engines." }
   ];
@@ -372,7 +372,7 @@ footer {
     { a: "cap", b: "chamber", tone: "plasma", name: "Activated plasma", text: "Sprayed into the vacuum, where it acts as a hyper-attractor." },
     { a: "cap", b: "panel", tone: "plasma", name: "Warm plasma", text: "Circulates beneath the panels and keeps them superconducting. Without the flow they stiffen." },
     { a: "chamber", b: "director", tone: "", name: "Green levitons", text: "Raw and unfocused." },
-    { a: "panel", b: "director", tone: "", name: "Bubble and field map", text: "The panels make the ship light and read the gravity field around the hull. The director needs that map to know where and how to push. Without the bubble, the levitons cannot lift the ship's mass." },
+    { a: "panel", b: "director", tone: "", name: "Bubble and field map", text: "The panels make the ship light and read the gravity field around the hull. The Vector Controller needs that map to know where and how to push. Without the bubble, the levitons cannot lift the ship's mass." },
     { a: "director", b: "lift", tone: "", name: "Shaped leviton stream", text: "Out of the ship: lift or thrust in the chosen direction." }
   ];
   var BY = {};
@@ -398,7 +398,7 @@ footer {
   });
 
   var $ = function (id) { return document.getElementById(id); };
-  var video = $("film"), hls = null, cam = "fly", subsOn = true;
+  var video = $("film"), hls = null, cam = "fly", subsOn = false;
 
   // ---------- video ----------
   function load(cameraKey) {
@@ -527,7 +527,7 @@ footer {
     if (!BY[key]) {
       d.innerHTML = '<span class="tag">Overview <i>8 coins · 9 arrows</i></span>' +
         '<h3>' + (key === "intro" ? "The chain assembles" : "From a living cell to lift") + '</h3>' +
-        '<p class="role">Two branches leave the Sub-Orb and meet in the condenser. From there the plasma splits again: one way makes the force, the other makes the ship light. They meet in the Field Director, and the result is lift.</p>' +
+        '<p class="role">Two branches leave the Sub-Orb and meet in the Capacitor. From there the plasma splits again: one way makes the force, the other makes the ship light. They meet in the Vector Controller, and the result is lift.</p>' +
         '<p class="what">Oris takes the coins in order. Each one glows while she speaks about it. Tap any coin to jump to its part of the film.</p>' +
         '<button class="btn seek" type="button" data-t="' + COINS[0].t0 + '">Start at the Sub-Orb</button>';
     } else {
@@ -535,7 +535,7 @@ footer {
       var ins = ARROWS.filter(function (a) { return a.b === key; }), outs = ARROWS.filter(function (a) { return a.a === key; });
       var html = '<span class="tag">Coin 0' + c.n + ' <i>' + fmt(c.t0) + '</i></span><h3></h3><p class="what"></p><p class="role"></p><div class="links"></div>';
       d.innerHTML = html;
-      d.querySelector("h3").textContent = c.name;
+      d.querySelector("h3").textContent = c.full || c.name;
       d.querySelector(".what").textContent = c.what;
       d.querySelector(".role").textContent = c.role;
       var links = d.querySelector(".links");
